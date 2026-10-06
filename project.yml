@@ -1,0 +1,34 @@
+name: HudDict
+options:
+  bundleIdPrefix: com.example
+  deploymentTarget:
+    macOS: "14.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    PRODUCT_NAME: HudDict
+    GENERATE_INFOPLIST_FILE: NO
+    CODE_SIGN_STYLE: Automatic
+targets:
+  HudDict:
+    type: application
+    platform: macOS
+    sources:
+      - path: HudDict
+    settings:
+      base:
+        INFOPLIST_FILE: HudDict/App/Info.plist
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.huddict
+        ENABLE_HARDENED_RUNTIME: YES
+        CODE_SIGN_IDENTITY: "-"
+    entitlements:
+      path: HudDict/App/HudDict.entitlements
+      properties: {}
+schemes:
+  HudDict:
+    build:
+      targets:
+        HudDict: all
+    run:
+      config: Debug

@@ -1,0 +1,13 @@
+# 生成的 Xcode 工程（由 project.yml 经 XcodeGen 生成，勿手改勿提交）
+*.xcodeproj/
+*.xcworkspace/
+
+# 构建产物
+.build/
+DerivedData/
+
+# Xcode 用户数据
+xcuserdata/
+
+# macOS
+.DS_Store
