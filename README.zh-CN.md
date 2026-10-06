@@ -14,8 +14,10 @@ macOS 菜单栏悬浮词典。热键或菜单栏图标呼出小窗，输入一�
 
 - 菜单栏图标或全局热键呼出（默认 **⌘⌥⇧D**，可在设置中改）。
 - 始终在其他窗口之上，跟随所有桌面，可盖住无边框全屏窗口。
-- 半透明、可调透明度、可拖动；拖动条在窗口顶部。
+- 采用**固定深色外观**（不跟随系统浅色/深色模式），保证在浅色背景下文字依然清晰；圆角卡片 + 轻微边框。透明度可调，但**下限为 0.8** 以保证对比度。
+- 可拖动，拖动区为**窗口顶部 22pt**（那里画有手柄）；面板空白区域**不支持**拖动。
 - 呼出时**不抢占前台**：原应用仍是前台，菜单栏不切换、Dock 不跳。小窗可以接收键盘输入。
+- 译文/讲解过长时可在面板内**滚动**查看（面板固定 420×300）。
 - 呼出即清空上次内容，作为一次全新查询；Esc 或再次点击菜单栏图标隐藏（不退出进程）。
 
 ### 查询与输出
@@ -168,7 +170,7 @@ make layering   # 校验 ExplainClient / WordBook 未引用 AppKit
 ### 代码入口
 
 - 程序入口是 `HudDict/App/main.swift`（顶层代码必须放在名为 `main.swift` 的文件中），启动包在 `MainActor.assumeIsolated` 里。
-- 悬浮面板的拖动由 AppKit 的 `WindowDragStrip` 叠加层处理（SwiftUI 内容会吃掉鼠标事件，不能只靠 `isMovableByWindowBackground`）。
+- 悬浮面板的拖动由 AppKit 的 `WindowDragStrip` 叠加层处理（SwiftUI 内容会吃掉鼠标事件，不能只靠 `isMovableByWindowBackground`）。它只覆盖顶部 22pt；其背景/描边卡片层使用 `allowsHitTesting(false)`，避免吞掉拖动事件。
 
 ### 流式输出协议
 
@@ -180,6 +182,8 @@ make layering   # 校验 ExplainClient / WordBook 未引用 AppKit
 
 - `docs/macos-hud-dictionary-requirements.md` — 需求说明
 - `docs/macos-hud-dictionary-implementation-decisions.md` — 实现决策记录
+- `docs/macos-hud-dictionary-known-issues.md` — 已知问题（含已修复与暂不修复）
+- `docs/macos-hud-dictionary-todo.md` — 待办与未来改进
 - `AGENTS.md` — 给 AI 协作者的仓库速览与硬性约束
 
 ## 明确不做

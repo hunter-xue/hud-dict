@@ -14,8 +14,10 @@ It is **not** a selection tool and **not** screen translation: it does not read 
 
 - Summoned by the menu-bar icon or a global hotkey (default **⌘⌥⇧D**, configurable in Settings).
 - Always above other windows, follows all desktops, and can cover borderless full-screen windows.
-- Translucent with adjustable opacity, draggable; the drag handle is at the top of the window.
+- Uses a **fixed dark appearance** (does not follow the system light/dark mode) so text stays readable over light backgrounds; a rounded card with a subtle border. Opacity is adjustable, but its lower bound is **0.8** to keep contrast.
+- Draggable by the **top 22pt strip** (a handle is drawn there); the blank area of the panel is intentionally not draggable.
 - Does **not** steal focus when shown: the previous app stays frontmost, the menu bar does not switch, and the Dock does not jump. The panel can still receive keyboard input.
+- Long translation/explanation is scrollable inside the panel (the panel has a fixed 420×300 size).
 - Clears its previous content on show, treating each summon as a fresh query; hide with Esc or by clicking the menu-bar icon again (the process stays alive).
 
 ### Query & output
@@ -168,7 +170,7 @@ Strictly two layers; the window layer never leaks into the business layer:
 ### Code entry points
 
 - The program entry point is `HudDict/App/main.swift` (top-level code must live in a file named `main.swift`), with startup wrapped in `MainActor.assumeIsolated`.
-- Panel dragging is handled by an AppKit overlay, `WindowDragStrip` (SwiftUI content swallows mouse events, so `isMovableByWindowBackground` alone is not enough).
+- Panel dragging is handled by an AppKit overlay, `WindowDragStrip` (SwiftUI content swallows mouse events, so `isMovableByWindowBackground` alone is not enough). It overlays only the top 22pt; its background/overlay card layers use `allowsHitTesting(false)` so they don't swallow the drag events.
 
 ### Streaming output protocol
 
@@ -180,6 +182,8 @@ The model is asked to output `translation <<<SPLIT>>> explanation`, and the clie
 
 - `docs/macos-hud-dictionary-requirements.md` — requirements (Chinese)
 - `docs/macos-hud-dictionary-implementation-decisions.md` — implementation decisions (Chinese)
+- `docs/macos-hud-dictionary-known-issues.md` — known issues, fixed and deferred (Chinese)
+- `docs/macos-hud-dictionary-todo.md` — deferred improvements (Chinese)
 - `AGENTS.md` — repository quick reference and hard constraints for AI collaborators
 
 ## Out of scope
