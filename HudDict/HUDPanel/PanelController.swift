@@ -40,7 +40,8 @@ public final class PanelController {
 
         let dragStrip = WindowDragStrip()
         dragStrip.translatesAutoresizingMaskIntoConstraints = false
-        container.addSubview(dragStrip)
+        // 置于 SwiftUI 内容之上，确保顶部拖动条稳定接收 mouseDown。
+        container.addSubview(dragStrip, positioned: .above, relativeTo: hosting)
         NSLayoutConstraint.activate([
             dragStrip.leadingAnchor.constraint(equalTo: container.leadingAnchor),
             dragStrip.trailingAnchor.constraint(equalTo: container.trailingAnchor),

@@ -59,13 +59,16 @@ public struct PanelView: View {
         }
         .padding(14)
         // 固定深色底 + 圆角卡片，避免屏幕背景为浅色时文字对比度不足。
+        // 背景/描边层不参与命中，否则会挡掉面板顶部拖动条的事件。
         .background(
             RoundedRectangle(cornerRadius: Self.cornerRadius)
                 .fill(Self.panelBackground)
+                .allowsHitTesting(false)
         )
         .overlay(
             RoundedRectangle(cornerRadius: Self.cornerRadius)
                 .stroke(Color.white.opacity(0.12), lineWidth: 1)
+                .allowsHitTesting(false)
         )
         .clipShape(RoundedRectangle(cornerRadius: Self.cornerRadius))
         // 强制深色外观，使输入框、进度条、按钮等控件配色一致。

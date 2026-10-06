@@ -1,10 +1,43 @@
 # macOS 悬浮词典 — 已知问题记录
 
-状态：记录已发现但**暂不修复**的问题，供后续处理。按发现时间倒序。
+状态：记录已发现的问题，供后续处理。按发现时间倒序，含**已修复**与**暂不修复**两类，每节末尾标注当前状态。
 
 ---
 
-## 1. 设置窗口粘贴快捷键失效（⌘V 等编辑快捷键无效）
+## 1. 改固定深色/圆角外观后，面板无法拖动（已修复）
+
+### 现象
+
+- 为悬浮小窗引入"固定深色底 + 圆角卡片"外观后，**整块面板都拖不动**（原先可拖）。
+- 顶部 22pt 拖动区**悬停时仍有手形光标**，但按住拖动无反应。
+
+### 根因
+
+该次外观改动加了：
+
+```swift
+.background(RoundedRectangle(cornerRadius: 12).fill(...))
+.overlay(RoundedRectangle(cornerRadius: 12).stroke(...))
+.clipShape(RoundedRectangle(cornerRadius: 12))
+```
+
+- `RoundedRectangle` 的填充/描边层**默认参与命中测试**，使 SwiftUI 底层在面板范围内到处可命中，**挡掉了窗口背景拖动**（`HUDPanel.isMovableByWindowBackground`）。
+- 顶部拖动条 `WindowDragStrip` 虽叠加在 `NSHostingView` 之上，但受上述层级/命中影响，**`mouseDown` 未能可靠收到**；而 `NSTrackingArea`（`activeAlways`）不依赖命中，故悬停手形仍在 —— 这正是"有手形却拖不动"的原因。
+
+### 修复
+
+- `PanelView`：背景/描边层加 `.allowsHitTesting(false)`，仅保留 `.clipShape` 负责圆角绘制。
+- `PanelController`：拖动条改为显式置于 SwiftUI 内容之上
+  （`container.addSubview(dragStrip, positioned: .above, relativeTo: hosting)`）。
+
+### 范围与结论
+
+- 拖动区**只保留顶部 22pt**；面板空白区**不**支持拖动（符合当前设计）。
+- **已修复**。
+
+---
+
+## 2. 设置窗口粘贴快捷键失效（⌘V 等编辑快捷键无效）
 
 ### 现象
 
@@ -58,7 +91,7 @@
 
 ---
 
-## 2. 菜单栏图标与 App 图标不是同一张图（设计如此）
+## 3. 菜单栏图标与 App 图标不是同一张图（设计如此）
 
 ### 现象
 
