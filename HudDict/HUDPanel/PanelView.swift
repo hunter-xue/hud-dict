@@ -24,11 +24,18 @@ public struct PanelView: View {
                 .onSubmit { model.submit() }
                 .onChange(of: model.focusRequest) { _, _ in inputFocused = true }
 
-            if !model.translation.isEmpty {
-                section(title: "译文", text: model.translation)
-            }
-            if !model.explanation.isEmpty {
-                section(title: "讲解", text: model.explanation)
+            if !model.translation.isEmpty || !model.explanation.isEmpty {
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 10) {
+                        if !model.translation.isEmpty {
+                            section(title: "译文", text: model.translation)
+                        }
+                        if !model.explanation.isEmpty {
+                            section(title: "讲解", text: model.explanation)
+                        }
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                }
             }
             if let status = model.statusMessage {
                 Text(status)
