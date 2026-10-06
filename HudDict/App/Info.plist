@@ -8,6 +8,8 @@
 	<string>HudDict</string>
 	<key>CFBundleIdentifier</key>
 	<string>com.example.huddict</string>
+	<key>CFBundleIconName</key>
+	<string>AppIcon</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>

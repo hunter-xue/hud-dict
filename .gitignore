@@ -5,6 +5,8 @@
 # 构建产物
 .build/
 DerivedData/
+build/
+*.dmg
 
 # Xcode 用户数据
 xcuserdata/

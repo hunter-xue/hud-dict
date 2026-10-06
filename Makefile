@@ -19,11 +19,15 @@ PURE_SOURCES = \
 	HudDict/WordBook/WordBook.swift \
 	HudDict/WordBook/MarkdownExporter.swift
 
-.PHONY: generate build typecheck test layering run clean
+.PHONY: generate build typecheck test layering run icon clean
 
 ## 从 project.yml 重新生成 Xcode 工程
 generate:
 	xcodegen generate
+
+## 从 Assets/AppIcon-source-1024.png 重新生成 AppIcon 图标集
+icon:
+	./scripts/make_icon.sh
 
 ## 用 xcodebuild 构建（需要可用的完整 Xcode）
 build:
