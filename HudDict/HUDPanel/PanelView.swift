@@ -17,8 +17,9 @@ public struct PanelView: View {
             TextField("输入一个词、一句话或一小段，回车查询", text: $model.input)
                 .textFieldStyle(.plain)
                 .font(.system(size: 14))
+                .foregroundStyle(Self.bodyText)
                 .padding(8)
-                .background(RoundedRectangle(cornerRadius: 8).fill(Color.black.opacity(0.15)))
+                .background(RoundedRectangle(cornerRadius: 8).fill(Color.white.opacity(0.08)))
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .focused($inputFocused)
                 .onSubmit { model.submit() }
@@ -57,9 +58,28 @@ public struct PanelView: View {
             .font(.system(size: 12))
         }
         .padding(14)
+        // 固定深色底 + 圆角卡片，避免屏幕背景为浅色时文字对比度不足。
+        .background(
+            RoundedRectangle(cornerRadius: Self.cornerRadius)
+                .fill(Self.panelBackground)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: Self.cornerRadius)
+                .stroke(Color.white.opacity(0.12), lineWidth: 1)
+        )
+        .clipShape(RoundedRectangle(cornerRadius: Self.cornerRadius))
+        // 强制深色外观，使输入框、进度条、按钮等控件配色一致。
+        .environment(\.colorScheme, .dark)
         .frame(width: 420, height: 300)
         .onAppear { inputFocused = true }
     }
+
+    /// 面板固定深色底。
+    private static let panelBackground = Color(white: 0.12)
+    /// 正文文字（近白）。
+    private static let bodyText = Color.white.opacity(0.92)
+    /// 卡片圆角。
+    private static let cornerRadius: CGFloat = 12
 
     @ViewBuilder
     private func section(title: String, text: String) -> some View {
@@ -69,6 +89,7 @@ public struct PanelView: View {
                 .foregroundStyle(.secondary)
             Text(text)
                 .font(.system(size: 13))
+                .foregroundStyle(Self.bodyText)
                 .textSelection(.enabled)
                 .fixedSize(horizontal: false, vertical: true)
         }

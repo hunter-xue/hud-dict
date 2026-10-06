@@ -40,8 +40,9 @@ public final class SettingsStore {
     }
 
     public var opacity: Double {
-        get { defaults.object(forKey: Key.opacity) as? Double ?? Self.defaultOpacity }
-        set { defaults.set(newValue, forKey: Key.opacity) }
+        // 下限 0.8：面板为固定深色底，过低的透明度会削弱文字对比度。
+        get { min(max(defaults.object(forKey: Key.opacity) as? Double ?? Self.defaultOpacity, 0.8), 1.0) }
+        set { defaults.set(min(max(newValue, 0.8), 1.0), forKey: Key.opacity) }
     }
 
     public var hotKeyCode: UInt32 {

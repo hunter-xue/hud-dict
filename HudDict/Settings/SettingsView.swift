@@ -74,7 +74,7 @@ public struct SettingsView: View {
                 TextField("目标语言", text: $targetLanguage, prompt: Text("如 简体中文、English、日本語"))
                 HStack {
                     Text("透明度")
-                    Slider(value: $opacity, in: 0.5...1.0)
+                    Slider(value: $opacity, in: 0.8...1.0)
                         .onChange(of: opacity) { _, newValue in
                             settings.opacity = newValue
                             onOpacityChanged(newValue)
