@@ -89,6 +89,7 @@ Prefer the GUI? After `make generate`, open `HudDict.xcodeproj` in Xcode and pre
 | `make generate` | Regenerate `HudDict.xcodeproj` from `project.yml` (run after editing `project.yml`) |
 | `make build` | Debug build via `xcodebuild` |
 | `make run` | Compile and run directly with `swiftc` |
+| `make dist` | Build Release and produce a DMG in `build/` |
 | `make icon` | Regenerate the app icon set from `Assets/AppIcon-source-1024.png` |
 | `make test` | Run the pure-logic unit tests |
 | `make typecheck` | Full `swiftc` type check |
@@ -100,6 +101,42 @@ Prefer the GUI? After `make generate`, open `HudDict.xcodeproj` in Xcode and pre
 ### Troubleshooting
 
 - If `xcodebuild` fails with a broken `IDESimulatorFoundation` plugin, run `xcodebuild -runFirstLaunch`. Meanwhile `make run` / `make typecheck` / `make test` (plain `swiftc`) work without a full Xcode build.
+
+## Packaging (DMG)
+
+Build a distributable disk image:
+
+```sh
+make dist
+# => build/HudDict-1.0.dmg
+```
+
+`make dist` runs `scripts/make_dmg.sh`, which:
+
+1. Does a **Release** build for **arm64** into `build/DerivedData`.
+2. Stages `HudDict.app` plus an `Applications` symlink (drag-to-install).
+3. **Ad-hoc signs** the app (`codesign -s -`).
+4. Creates a compressed DMG with `hdiutil` → `build/HudDict-<version>.dmg`.
+
+The version in the filename comes from `CFBundleShortVersionString` in `HudDict/App/Info.plist`.
+
+### Requirements & limitations
+
+- **Apple Silicon only** (arm64). Not a universal binary.
+- **No Developer ID / notarization** — this project has no Apple Developer account, so the app is only ad-hoc signed. On another Mac, Gatekeeper will block the first launch.
+
+### Installing on another Mac
+
+1. Copy `HudDict-1.0.dmg` to the target Mac and open it.
+2. Drag **HudDict** into **Applications**.
+3. First launch: **right-click the app → Open**, then click **Open** in the dialog.
+   - If macOS says the app "is damaged" or has no Open option, go to **System Settings → Privacy & Security**, scroll down, and click **Open Anyway**.
+   - If the DMG was downloaded from the internet, clear the quarantine flag if needed:
+     ```sh
+     xattr -dr com.apple.quarantine /Applications/HudDict.app
+     ```
+
+> There is no supported way to make an unsigned app launch with a plain double-click on other Macs — that requires Developer ID signing and notarization.
 
 ## Test & verify
 

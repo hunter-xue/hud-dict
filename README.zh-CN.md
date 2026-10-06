@@ -89,6 +89,7 @@ make run
 | `make generate` | 从 `project.yml` 重新生成 `HudDict.xcodeproj`（改过 `project.yml` 后执行） |
 | `make build` | 用 `xcodebuild` 做 Debug 构建 |
 | `make run` | 用 `swiftc` 直接编译并运行 |
+| `make dist` | Release 构建并生成 DMG 到 `build/` |
 | `make icon` | 从 `Assets/AppIcon-source-1024.png` 重新生成图标集 |
 | `make test` | 运行纯逻辑单元测试 |
 | `make typecheck` | 全量 `swiftc` 类型检查 |
@@ -100,6 +101,42 @@ make run
 ### 常见问题
 
 - 若 `xcodebuild` 报 `IDESimulatorFoundation` 插件损坏，执行 `xcodebuild -runFirstLaunch`。期间可先用 `make run` / `make typecheck` / `make test`（纯 `swiftc`，无需完整 Xcode 构建）。
+
+## 打包（DMG）
+
+生成可分发的磁盘映像：
+
+```sh
+make dist
+# => build/HudDict-1.0.dmg
+```
+
+`make dist` 调用 `scripts/make_dmg.sh`，依次：
+
+1. 做 **Release** 构建（**arm64**），产物写入 `build/DerivedData`；
+2. 准备打包目录：`HudDict.app` + 指向 `/Applications` 的符号链接（拖拽安装）；
+3. 对 app 做 **ad-hoc 签名**（`codesign -s -`）；
+4. 用 `hdiutil` 生成压缩 DMG → `build/HudDict-<version>.dmg`。
+
+文件名中的版本号取自 `HudDict/App/Info.plist` 的 `CFBundleShortVersionString`。
+
+### 要求与限制
+
+- **仅支持 Apple Silicon（arm64）**，不是通用二进制。
+- **无 Developer ID、未公证** —— 本项目没有 Apple 开发者账号，app 只有 ad-hoc 签名。在别的 Mac 上首次打开会被 Gatekeeper 拦截。
+
+### 在别的 Mac 上安装
+
+1. 把 `HudDict-1.0.dmg` 拷到目标 Mac 并打开。
+2. 把 **HudDict** 拖进 **Applications**。
+3. 首次启动：**右键点 app → 打开**，在弹窗里再点**打开**。
+   - 若系统提示 app "已损坏"或没有"打开"选项：到 **系统设置 → 隐私与安全性**，向下滚动，点 **仍要打开**。
+   - 若 DMG 是从网上下载的，必要时清除隔离属性：
+     ```sh
+     xattr -dr com.apple.quarantine /Applications/HudDict.app
+     ```
+
+> 未签名的 app **没有任何正规办法**在别机双击即开 —— 那需要 Developer ID 签名 + 公证。
 
 ## 测试与校验
 
