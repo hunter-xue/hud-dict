@@ -59,15 +59,47 @@ LLM 设置、热键、目标语言、透明度、单词本、退出。
 
 ## 构建与运行
 
-Xcode 工程由 `project.yml` 生成，**不提交** `HudDict.xcodeproj`：
+前置条件：macOS 14+、完整 Xcode、XcodeGen（`brew install xcodegen`）。Xcode 工程由 `project.yml` 生成，`HudDict.xcodeproj` **不提交**，所以务必先生成。
+
+### 构建步骤
 
 ```sh
-make generate   # 从 project.yml 生成 HudDict.xcodeproj
-make build      # xcodebuild Debug 构建（产物在 DerivedData）
-make run        # 用 swiftc 直接编译并运行（不依赖 xcodebuild）
+# 1.（一次即可）没有 XcodeGen 先安装
+brew install xcodegen
+
+# 2. 从 project.yml 生成 Xcode 工程
+make generate
+
+# 3. 构建（Debug），.app 产物在 DerivedData
+make build
+
+# 4. 运行
+#    方式 A：打开构建出的 app
+open "$(ls -d ~/Library/Developer/Xcode/DerivedData/HudDict-*/Build/Products/Debug/HudDict.app | head -1)"
+#    方式 B：用 swiftc 直接编译并运行（不依赖 xcodebuild）
+make run
 ```
 
-也可以在 `make generate` 后用 Xcode 打开 `HudDict.xcodeproj` 运行。
+想用图形界面？执行 `make generate` 后用 Xcode 打开 `HudDict.xcodeproj`，按 ⌘R 运行。
+
+### 常用命令
+
+| 命令 | 作用 |
+|---|---|
+| `make generate` | 从 `project.yml` 重新生成 `HudDict.xcodeproj`（改过 `project.yml` 后执行） |
+| `make build` | 用 `xcodebuild` 做 Debug 构建 |
+| `make run` | 用 `swiftc` 直接编译并运行 |
+| `make icon` | 从 `Assets/AppIcon-source-1024.png` 重新生成图标集 |
+| `make test` | 运行纯逻辑单元测试 |
+| `make typecheck` | 全量 `swiftc` 类型检查 |
+| `make layering` | 校验 `ExplainClient` / `WordBook` 未引用 AppKit |
+| `make clean` | 清理构建产物 |
+
+> **不要手改 `HudDict.xcodeproj`** —— 它是生成产物。结构改动请改 `project.yml`，再 `make generate`。
+
+### 常见问题
+
+- 若 `xcodebuild` 报 `IDESimulatorFoundation` 插件损坏，执行 `xcodebuild -runFirstLaunch`。期间可先用 `make run` / `make typecheck` / `make test`（纯 `swiftc`，无需完整 Xcode 构建）。
 
 ## 测试与校验
 

@@ -59,15 +59,47 @@ LLM settings, hotkey, target language, opacity, wordbook, quit.
 
 ## Build & run
 
-The Xcode project is generated from `project.yml`; `HudDict.xcodeproj` is **not committed**:
+Prerequisites: macOS 14+, full Xcode, and XcodeGen (`brew install xcodegen`). The Xcode project is generated from `project.yml`, so `HudDict.xcodeproj` is **not committed** — always generate it first.
+
+### Steps
 
 ```sh
-make generate   # generate HudDict.xcodeproj from project.yml
-make build      # xcodebuild Debug build (output in DerivedData)
-make run        # compile and run directly with swiftc (no xcodebuild needed)
+# 1. (once) install XcodeGen if you don't have it
+brew install xcodegen
+
+# 2. generate the Xcode project from project.yml
+make generate
+
+# 3. build (Debug) — the .app lands in DerivedData
+make build
+
+# 4. run
+#    option A: open the built app
+open "$(ls -d ~/Library/Developer/Xcode/DerivedData/HudDict-*/Build/Products/Debug/HudDict.app | head -1)"
+#    option B: compile and run directly with swiftc (no xcodebuild needed)
+make run
 ```
 
-You can also run `make generate` and then open `HudDict.xcodeproj` in Xcode.
+Prefer the GUI? After `make generate`, open `HudDict.xcodeproj` in Xcode and press Run (⌘R).
+
+### Useful targets
+
+| Command | What it does |
+|---|---|
+| `make generate` | Regenerate `HudDict.xcodeproj` from `project.yml` (run after editing `project.yml`) |
+| `make build` | Debug build via `xcodebuild` |
+| `make run` | Compile and run directly with `swiftc` |
+| `make icon` | Regenerate the app icon set from `Assets/AppIcon-source-1024.png` |
+| `make test` | Run the pure-logic unit tests |
+| `make typecheck` | Full `swiftc` type check |
+| `make layering` | Verify `ExplainClient` / `WordBook` do not import AppKit |
+| `make clean` | Clean build artifacts |
+
+> **Do not hand-edit `HudDict.xcodeproj`** — it is generated. Make structural changes in `project.yml`, then run `make generate`.
+
+### Troubleshooting
+
+- If `xcodebuild` fails with a broken `IDESimulatorFoundation` plugin, run `xcodebuild -runFirstLaunch`. Meanwhile `make run` / `make typecheck` / `make test` (plain `swiftc`) work without a full Xcode build.
 
 ## Test & verify
 
