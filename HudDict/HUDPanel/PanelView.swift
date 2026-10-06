@@ -19,6 +19,7 @@ public struct PanelView: View {
                 .font(.system(size: 14))
                 .padding(8)
                 .background(RoundedRectangle(cornerRadius: 8).fill(Color.black.opacity(0.15)))
+                .frame(maxWidth: .infinity, alignment: .leading)
                 .focused($inputFocused)
                 .onSubmit { model.submit() }
                 .onChange(of: model.focusRequest) { _, _ in inputFocused = true }
@@ -49,7 +50,7 @@ public struct PanelView: View {
             .font(.system(size: 12))
         }
         .padding(14)
-        .frame(minWidth: 380, minHeight: 220)
+        .frame(width: 420, height: 300)
         .onAppear { inputFocused = true }
     }
 
